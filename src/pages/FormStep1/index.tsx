@@ -1,47 +1,56 @@
-import Theme from '../../components/Theme'
-import * as C from './styles'
-import { useHistory } from 'react-router'
-import { useForm, FormActions } from '../../contexts/FormContext'
-import { ChangeEvent } from 'react'
+import { useHistory } from 'react-router-dom';
+import * as C from './styles';
+import { useForm, FormActions } from '../../contexts/FormContext';
+import { Theme } from '../../components/Theme';
+import { ChangeEvent, useEffect } from 'react';
 
-const FormStep1 = () => {
-  const history = useHistory();
-  const { state, dispatch } = useForm();
+export const FormStep1 = () => {
+    const history = useHistory();
+    const { state, dispatch } = useForm();
 
-  const handleNextStep = () => {
-    history.push('/step2');
-  }
+    useEffect(() => {
+        dispatch({
+            type: FormActions.setCurrentStep,
+            payload: 1
+        });
+    }, []);
 
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch({
-      type: FormActions.setName,
-      payload: e.target.value
-    });
-  }
+    const handleNextStep = () => {
+        if(state.name !== '') {
+            history.push('/step2');
+        } else {
+            alert("Preencha os dados.");
+        }
+    }
 
-  return (
-    <Theme>
-      <C.Container>
-        <p>Passo 1/3</p>
-        <h1>Vamos começar com seu nome</h1>
-        <p>Preencha o campo abaixo com seu nome completo.</p>
+    const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+        dispatch({
+            type: FormActions.setName,
+            payload: e.target.value
+        });
+    }
 
-        <hr/>
+    return (
+        <Theme>
+            <C.Container>
+                <p>Passo 1/3</p>
+                <h1>Vamos começar com seu nome</h1>
+                <p>Preencha o campo abaixo com seu nome completo.</p>
 
-        <label>
-          Seu nome completo
-          <input 
-          type="text"
-          autoFocus={true}
-          value={state.name}
-          onChange={handleNameChange}
-          />
-        </label>
+                <hr/>
 
-        <button onClick={handleNextStep}>Próximo</button>
-      </C.Container> 
-    </Theme>
-  )
+                <label>
+                    Seu nome completo
+                    <input
+                        type="text"
+                        autoFocus
+                        value={state.name}
+                        onChange={handleNameChange}
+                    />
+                </label>
+
+                <button onClick={handleNextStep}>Próximo</button>
+            </C.Container>
+        </Theme>
+    );
 }
-
-export default FormStep1
